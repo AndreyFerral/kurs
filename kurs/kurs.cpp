@@ -1,25 +1,17 @@
 ﻿#include "framework.h" 
 #include "resource.h" 
-#include <stdlib.h> 
-#include <stdio.h> 
 #include <string> 
-#include <shellapi.h> 
-#include <commctrl.h> 
 using namespace std;
 
-//HMENU hmenu;
 HWND hWndDialog;
-//HINSTANCE ghInstance; // Переменная для хранения хендела процесса 
+
 // Описание используемой оконной процедуры 
-
 BOOL CALLBACK PviewDlgProc(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
-// Главное приложение программы 
 
+// Главное приложение программы 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
 	MSG msg;
-	//ghInstance = hInstance;
-
 	// Создание диалогового окна 
 	hWndDialog = CreateDialogParam(hInstance,
 		MAKEINTRESOURCE(IDD_DIALOG1),
@@ -40,6 +32,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	return 0;
 }
 
+
+
 //Процедура обработки сообщений диалогового окна 
 BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	UINT wMsg,
@@ -59,6 +53,8 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	static HWND hStatic, hStatic1, hStatic2;
 	static int lx, ly, lx1, ly1, lx2, ly2; // координаты конца экрана 
 	static int pen = 1, brush = 1, color = 1, style = 7, width = 1; // значения для всех полос стандартные
+
+
 
 
 	switch (wMsg) {
@@ -207,7 +203,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		}
 		
 		/*
-		// для отлади
+		// для отладки
 		point.x = LOWORD(lParam) - 11; point.y = HIWORD(lParam) - 11;
 		MessageBox(hWnd, to_wstring(point.x).data(), L"Caption text", MB_OK);
 		MessageBox(hWnd, to_wstring(point.y).data(), L"Caption text", MB_OK);
