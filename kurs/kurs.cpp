@@ -5,21 +5,20 @@
 #include <string> 
 #include <shellapi.h> 
 #include <commctrl.h> 
-
 using namespace std;
 
+//HMENU hmenu;
 HWND hWndDialog;
-HINSTANCE ghInstance; // Переменная для хранения хендела процесса 
+//HINSTANCE ghInstance; // Переменная для хранения хендела процесса 
 // Описание используемой оконной процедуры 
 
 BOOL CALLBACK PviewDlgProc(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 // Главное приложение программы 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
 	MSG msg;
-	ghInstance = hInstance;
+	//ghInstance = hInstance;
 
 	// Создание диалогового окна 
 	hWndDialog = CreateDialogParam(hInstance,
@@ -60,6 +59,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	static HWND hStatic, hStatic1, hStatic2;
 	static int lx, ly, lx1, ly1, lx2, ly2; // координаты конца экрана 
 	static int pen = 1, brush = 1, color = 1, style = 7, width = 1; // значения для всех полос стандартные
+
 
 	switch (wMsg) {
 	case WM_CLOSE:
@@ -183,7 +183,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 				CountPointLER++;
 				if (CountPointLER == 1) { pt[0].x = LOWORD(lParam) - 11; pt[0].y = HIWORD(lParam) - 11; }
 				else if (CountPointLER == 2) { pt[1].x = LOWORD(lParam) - 11; pt[1].y = HIWORD(lParam) - 11; }
-				else MessageBox(hWnd, L"Вы за максимальное кол-во точек (2)", L"Caption text", MB_OK);
+				else MessageBox(hWnd, L"Вы выбрали максимальное кол-во точек (2)", L"Caption text", MB_OK);
 			}
 			if (CheckDraw == "ID_CHORD" || CheckDraw == "ID_ARC" || CheckDraw == "ID_PIE") {
 				CountPointCAP++;
@@ -207,6 +207,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		}
 		
 		/*
+		// для отлади
 		point.x = LOWORD(lParam) - 11; point.y = HIWORD(lParam) - 11;
 		MessageBox(hWnd, to_wstring(point.x).data(), L"Caption text", MB_OK);
 		MessageBox(hWnd, to_wstring(point.y).data(), L"Caption text", MB_OK);
@@ -225,8 +226,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		break;
 	}
 	case WM_COMMAND: {
-		switch (LOWORD(wParam))
-		{
+		switch (LOWORD(wParam)) {
 		case ID_LINE: { CheckDraw = "ID_LINE"; break; }
 		case ID_ELLIPS: { CheckDraw = "ID_ELLIPS"; break; }
 		case ID_FOCUSRECT: { CheckDraw = "ID_FOCUSRECT"; break; }
@@ -250,8 +250,8 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 			else if (CheckDraw == "ID_CHORD" && CountPointCAP >= 4) { Chord(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y, pt[2].x, pt[2].y, pt[3].x, pt[3].y); }
 			else if (CheckDraw == "ID_PIE" && CountPointCAP >= 4) { Pie(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y, pt[2].x, pt[2].y, pt[3].x, pt[3].y); }
 			else if (CheckDraw == "ID_ARC" && CountPointCAP >= 4) { Arc(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y, pt[2].x, pt[2].y, pt[3].x, pt[3].y); }
-			else if (CheckDraw == "ID_POLYLINE") { Polyline(hdcm, ptpp, CountPointPP - 1); }
-			else if (CheckDraw == "ID_POLYGON") { Polygon(hdcm, ptpp, CountPointPP - 1); }
+			else if (CheckDraw == "ID_POLYLINE") { Polyline(hdcm, ptpp, CountPointPP); }
+			else if (CheckDraw == "ID_POLYGON") { Polygon(hdcm, ptpp, CountPointPP); }
 			else MessageBox(hWnd, L"Недостатоно точек для построения фигуры", L"Caption text", MB_OK);
 
 			InvalidateRect(hWnd, &rect1, false);

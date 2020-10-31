@@ -46,4 +46,7 @@
       <Filter>Файлы ресурсов</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Задачи.txt" />
+  </ItemGroup>
 </Project>
