@@ -1,12 +1,16 @@
-﻿#include "framework.h" 
+﻿#undef UNICODE
+#include "framework.h" 
 #include "resource.h" 
 #include <string> 
+#include <commctrl.h> // tooltip
 using namespace std;
 
 HWND hWndDialog;
+HINSTANCE hInst;
 
 // Описание используемой оконной процедуры 
 BOOL CALLBACK PviewDlgProc(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
+//HINSTANCE hInst;
 
 // Главное приложение программы 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
@@ -32,7 +36,36 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	return 0;
 }
 
+void CreateToolTip(HWND hwndParent, LPSTR ToolTipText) {
+	// Create a tooltip.
+	HWND hwndTT = CreateWindowEx(WS_EX_TOPMOST,
+		TOOLTIPS_CLASS, NULL,
+		WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
+		CW_USEDEFAULT, CW_USEDEFAULT,
+		CW_USEDEFAULT, CW_USEDEFAULT,
+		hwndParent, NULL, hInst, NULL);
 
+	SetWindowPos(hwndTT, HWND_TOPMOST,
+		0, 0, 0, 0,
+		SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+
+	// Set up "tool" information.
+	// In this case, the "tool" is the entire parent window.
+	TOOLINFO ti = { 0 };
+#if (_WIN32_WINNT >= 0x0501)
+	ti.cbSize = TTTOOLINFO_V1_SIZE;
+#else
+	ti.cbSize = sizeof(TOOLINFO);
+#endif
+	ti.uFlags = TTF_SUBCLASS;
+	ti.hwnd = hwndParent;
+	ti.hinst = hInst;
+	ti.lpszText = ToolTipText;
+	GetClientRect(hwndParent, &ti.rect);
+
+	// Associate the tooltip with the "tool" window.
+	SendMessage(hwndTT, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&ti);
+}
 
 //Процедура обработки сообщений диалогового окна 
 BOOL CALLBACK PviewDlgProc(HWND hWnd,
@@ -53,9 +86,6 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	static HWND hStatic, hStatic1, hStatic2;
 	static int lx, ly, lx1, ly1, lx2, ly2; // координаты конца экрана 
 	static int pen = 1, brush = 1, color = 1, style = 7, width = 1; // значения для всех полос стандартные
-
-
-
 
 	switch (wMsg) {
 	case WM_CLOSE:
@@ -115,6 +145,9 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		rect1.bottom = rect.bottom + rect.bottom;
 		rect2.right = rect.right + rect.right;
 		rect2.bottom = rect.bottom + 11;
+		
+		CreateToolTip(GetDlgItem(hWnd, IDC_PEN), LPSTR("собака"));
+
 
 		break;
 	}
@@ -174,12 +207,12 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	case WM_LBUTTONDOWN: {
 
 		if (LOWORD(lParam) >= 11 && LOWORD(lParam) <= lx + 11 && HIWORD(lParam) >= 11 && HIWORD(lParam) <= ly + 11) {
-			if (CheckDraw == "") { MessageBox(hWnd, L"Выберите тип фигуры для рисования", L"Caption text", MB_OK); };
+			if (CheckDraw == "") { MessageBox(hWnd, "Выберите тип фигуры для рисования", "Caption text", MB_OK); };
 			if (CheckDraw == "ID_LINE" || CheckDraw == "ID_ELLIPS" || CheckDraw == "ID_RECTANGLE") {
 				CountPointLER++;
 				if (CountPointLER == 1) { pt[0].x = LOWORD(lParam) - 11; pt[0].y = HIWORD(lParam) - 11; }
 				else if (CountPointLER == 2) { pt[1].x = LOWORD(lParam) - 11; pt[1].y = HIWORD(lParam) - 11; }
-				else MessageBox(hWnd, L"Вы выбрали максимальное кол-во точек (2)", L"Caption text", MB_OK);
+				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (2)", "Caption text", MB_OK);
 			}
 			if (CheckDraw == "ID_CHORD" || CheckDraw == "ID_ARC" || CheckDraw == "ID_PIE") {
 				CountPointCAP++;
@@ -187,18 +220,18 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 				else if (CountPointCAP == 2) { pt[1].x = LOWORD(lParam) - 11; pt[1].y = HIWORD(lParam) - 11; }
 				else if (CountPointCAP == 3) { pt[2].x = LOWORD(lParam) - 11; pt[2].y = HIWORD(lParam) - 11; }
 				else if (CountPointCAP == 4) { pt[3].x = LOWORD(lParam) - 11; pt[3].y = HIWORD(lParam) - 11; }
-				else MessageBox(hWnd, L"Вы выбрали максимальное кол-во точек (4)", L"Caption text", MB_OK);
+				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (4)", "Caption text", MB_OK);
 			}
 			if (CheckDraw == "ID_FOCUSRECT") {
 				CountPointF++;
 				if (CountPointF == 1) { FRect.left = LOWORD(lParam) - 11; FRect.top = HIWORD(lParam) - 11; }
 				else if (CountPointF == 2) { FRect.right = LOWORD(lParam) - 11; FRect.bottom = HIWORD(lParam) - 11; }
-				else MessageBox(hWnd, L"Вы выбрали максимальное кол-во точек (2)", L"Caption text", MB_OK);
+				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (2)", "Caption text", MB_OK);
 			}
 			if (CheckDraw == "ID_POLYGON" || CheckDraw == "ID_POLYLINE") {
 				CountPointPP++;
 				if (CountPointPP != 9) { ptpp[CountPointPP - 1].x = LOWORD(lParam) - 11; ptpp[CountPointPP - 1].y = HIWORD(lParam) - 11; }
-				else MessageBox(hWnd, L"Вы выбрали максимальное кол-во точек (8)", L"Caption text", MB_OK);
+				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (8)", "Caption text", MB_OK);
 			}
 		}
 		
@@ -248,7 +281,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 			else if (CheckDraw == "ID_ARC" && CountPointCAP >= 4) { Arc(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y, pt[2].x, pt[2].y, pt[3].x, pt[3].y); }
 			else if (CheckDraw == "ID_POLYLINE") { Polyline(hdcm, ptpp, CountPointPP); }
 			else if (CheckDraw == "ID_POLYGON") { Polygon(hdcm, ptpp, CountPointPP); }
-			else MessageBox(hWnd, L"Недостатоно точек для построения фигуры", L"Caption text", MB_OK);
+			else MessageBox(hWnd, "Недостатоно точек для построения фигуры", "Caption text", MB_OK);
 
 			InvalidateRect(hWnd, &rect1, false);
 			CountPointLER = 0; CountPointCAP = 0; CountPointF = 0; CountPointPP = 0; 
