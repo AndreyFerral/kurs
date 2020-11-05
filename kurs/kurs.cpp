@@ -10,7 +10,6 @@ HINSTANCE hInst;
 
 // Описание используемой оконной процедуры 
 BOOL CALLBACK PviewDlgProc(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
-//HINSTANCE hInst;
 
 // Главное приложение программы 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
@@ -146,7 +145,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		rect2.right = rect.right + rect.right;
 		rect2.bottom = rect.bottom + 11;
 		
-		CreateToolTip(GetDlgItem(hWnd, IDC_PEN), LPSTR("собака"));
+		CreateToolTip(GetDlgItem(hWnd, IDC_PEN), LPSTR("Изменить стиль пера"));
 
 
 		break;
@@ -265,8 +264,13 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		case ID_POLYGON: { CheckDraw = "ID_POLYGON"; break; }
 		case ID_POLYLINE: { CheckDraw = "ID_POLYLINE"; break; }
 		case ID_RECTANGLE: { CheckDraw = "ID_RECTANGLE"; break; }
-		case IDC_CHECK1: { 
-			if (IsDlgButtonChecked(hWnd, IDC_CHECK1)) { SetPolyFillMode(hdcm, WINDING); } 
+		case ID_CLEAN: { 
+			PatBlt(hdcm, 0, 0, lx, ly, PATCOPY); // большая область
+			PatBlt(hdcm2, 0, 0, lx2, ly2, PATCOPY); // small view
+			InvalidateRect(hWnd, NULL, false);
+			break; }
+		case IDC_CHECK: { 
+			if (IsDlgButtonChecked(hWnd, IDC_CHECK)) { SetPolyFillMode(hdcm, WINDING); } 
 			else SetPolyFillMode(hdcm, ALTERNATE); 
 			break;
 		}

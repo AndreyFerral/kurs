@@ -22,7 +22,7 @@
 #define IDC_COLOR                       1010
 #define IDC_STYLE                       1011
 #define IDC_WIDTH                       1012
-#define IDC_CHECK1                      1013
+#define IDC_CHECK                      1013
 #define BIG_STATIC                      1014
 #define SMALL_STATIC                    1015
 #define DRAW_STATIC                     1020
@@ -31,12 +31,6 @@
 #define ID_32774                        32774
 #define ID_LINE                         32775
 #define ID_ELLIPS                       32776
-#define ID_METAFILE_32777               32777
-#define ID_METAFILE_32778               32778
-#define ID_METAFILE_32779               32779
-#define ID_DOWNLOAD                     32780
-#define ID_SAFE                         32781
-#define ID_COPY                         32782
 #define ID_32783                        32783
 #define ID_32786                        32786
 #define ID_32789                        32789
@@ -47,6 +41,8 @@
 #define ID_POLYGON                      32801
 #define ID_POLYLINE                     32802
 #define ID_RECTANGLE                    32803
+#define ID_32804                        32804
+#define ID_CLEAN                        32805
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -55,7 +51,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        130
-#define _APS_NEXT_COMMAND_VALUE         32804
+#define _APS_NEXT_COMMAND_VALUE         32806
 #define _APS_NEXT_CONTROL_VALUE         1021
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
