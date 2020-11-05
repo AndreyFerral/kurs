@@ -93,7 +93,6 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		break;
 
 	case WM_INITDIALOG: {
-
 		hStatic = GetDlgItem(hWnd, BIG_STATIC);
 		hdc = GetDC(hStatic); // получаем контекст устройства окна hWnd 
 		GetClientRect(hStatic, &rect); // получить координаты графического окна 
@@ -147,13 +146,12 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		rect2.bottom = rect.bottom + 11;
 		
 		CreateToolTip(GetDlgItem(hWnd, IDC_PEN), LPSTR("Изменить стиль пера"));
-/*
-		SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Информация");
-		SendMessage(GetDlgItem(hWnd, IDC_INFO2), WM_SETTEXT, NULL, (LPARAM)"Выбранная фигура");
-		SendMessage(GetDlgItem(hWnd, IDC_INFO4), WM_SETTEXT, NULL, (LPARAM)"Выбрано точек");
-		*/
-
-
+		CreateToolTip(GetDlgItem(hWnd, IDC_COLOR), LPSTR("Изменить цвет пера"));
+		CreateToolTip(GetDlgItem(hWnd, IDC_STYLE), LPSTR("Изменить стиль заливки"));
+		CreateToolTip(GetDlgItem(hWnd, IDC_BRUSH), LPSTR("Изменить цвет заливки"));
+		CreateToolTip(GetDlgItem(hWnd, IDC_WIDTH), LPSTR("Изменить ширину пера"));
+		CreateToolTip(GetDlgItem(hWnd, EXECUTE), LPSTR("Нарисовать выбранную фигуру"));
+		CreateToolTip(GetDlgItem(hWnd, SMALLV), LPSTR("Отобразить содержимое большого окна в маленьком"));
 
 
 		break;
@@ -161,7 +159,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	//Обработка сообщения прокрутки по горизонтали
 	case WM_HSCROLL: {
 		switch (LOWORD(wParam)) {
-		case SB_LINERIGHT: //На одну линию вправо
+		case SB_LINERIGHT: // На одну линию вправо
 			if (GetDlgItem(hWnd, IDC_PEN) == (HWND)lParam) { pen++; }
 			if (GetDlgItem(hWnd, IDC_BRUSH) == (HWND)lParam) { brush++; }
 			if (GetDlgItem(hWnd, IDC_COLOR) == (HWND)lParam) { color++; }
@@ -169,7 +167,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 			if (GetDlgItem(hWnd, IDC_WIDTH) == (HWND)lParam) { width++; }
 			break;
 
-		case SB_LINELEFT: //На линию влево
+		case SB_LINELEFT: // На линию влево
 			if (GetDlgItem(hWnd, IDC_PEN) == (HWND)lParam) { pen--; }
 			if (GetDlgItem(hWnd, IDC_BRUSH) == (HWND)lParam) { brush--; }
 			if (GetDlgItem(hWnd, IDC_COLOR) == (HWND)lParam) { color--; }
@@ -211,8 +209,8 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 
 		break;
 	}
-	case WM_LBUTTONDOWN: {
 
+	case WM_LBUTTONDOWN: {
 		if (LOWORD(lParam) >= 11 && LOWORD(lParam) <= lx + 11 && HIWORD(lParam) >= 11 && HIWORD(lParam) <= ly + 11) {
 			if (CheckDraw == "") { MessageBox(hWnd, "Выберите тип фигуры для рисования", "Caption text", MB_OK); };
 			if (CheckDraw == "ID_LINE" || CheckDraw == "ID_ELLIPS" || CheckDraw == "ID_RECTANGLE") {
@@ -304,8 +302,15 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"2");
 			break; }
 		case ID_CLEAN: { 
+			SelectObject(hdcm, (HBRUSH)GetStockObject(WHITE_BRUSH)); // кисть 
+			SelectObject(hdcm1, (HBRUSH)GetStockObject(WHITE_BRUSH)); // кисть 
+			pen = 1, brush = 1, color = 1, style = 7, width = 1;
+			usPen = CreatePen(pen - 1, width - 1, RGB(0, 0, 0));
+			SelectObject(hdcm, usPen); SelectObject(hdcm1, usPen);
 			PatBlt(hdcm, 0, 0, lx, ly, PATCOPY); // большая область
+			PatBlt(hdcm1, 0, 0, lx, ly, PATCOPY); // область атрибутов
 			PatBlt(hdcm2, 0, 0, lx2, ly2, PATCOPY); // small view
+			Rectangle(hdcm1, 21, 25, 81, 70);
 			InvalidateRect(hWnd, NULL, false);
 			break; }
 		case IDC_CHECK: { 
