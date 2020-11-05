@@ -15,6 +15,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
 	MSG msg;
+
 	// Создание диалогового окна 
 	hWndDialog = CreateDialogParam(hInstance,
 		MAKEINTRESOURCE(IDD_DIALOG1),
@@ -72,7 +73,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	WPARAM wParam,
 	LPARAM lParam) {
 
-	static string CheckDraw = "";
+	static string CheckDraw = "", TextConvert;
 	static int CountPointLER = 0, CountPointCAP = 0,
 		CountPointF = 0, CountPointPP = 0;
 	static RECT FRect, rect, rect1, rect2;
@@ -146,6 +147,13 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		rect2.bottom = rect.bottom + 11;
 		
 		CreateToolTip(GetDlgItem(hWnd, IDC_PEN), LPSTR("Изменить стиль пера"));
+/*
+		SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Информация");
+		SendMessage(GetDlgItem(hWnd, IDC_INFO2), WM_SETTEXT, NULL, (LPARAM)"Выбранная фигура");
+		SendMessage(GetDlgItem(hWnd, IDC_INFO4), WM_SETTEXT, NULL, (LPARAM)"Выбрано точек");
+		*/
+
+
 
 
 		break;
@@ -209,12 +217,14 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 			if (CheckDraw == "") { MessageBox(hWnd, "Выберите тип фигуры для рисования", "Caption text", MB_OK); };
 			if (CheckDraw == "ID_LINE" || CheckDraw == "ID_ELLIPS" || CheckDraw == "ID_RECTANGLE") {
 				CountPointLER++;
+				if (CountPointLER < 3) SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointLER).data());
 				if (CountPointLER == 1) { pt[0].x = LOWORD(lParam) - 11; pt[0].y = HIWORD(lParam) - 11; }
 				else if (CountPointLER == 2) { pt[1].x = LOWORD(lParam) - 11; pt[1].y = HIWORD(lParam) - 11; }
 				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (2)", "Caption text", MB_OK);
 			}
 			if (CheckDraw == "ID_CHORD" || CheckDraw == "ID_ARC" || CheckDraw == "ID_PIE") {
 				CountPointCAP++;
+				if (CountPointCAP < 5) SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointCAP).data());
 				if (CountPointCAP == 1) { pt[0].x = LOWORD(lParam) - 11; pt[0].y = HIWORD(lParam) - 11; }
 				else if (CountPointCAP == 2) { pt[1].x = LOWORD(lParam) - 11; pt[1].y = HIWORD(lParam) - 11; }
 				else if (CountPointCAP == 3) { pt[2].x = LOWORD(lParam) - 11; pt[2].y = HIWORD(lParam) - 11; }
@@ -223,13 +233,15 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 			}
 			if (CheckDraw == "ID_FOCUSRECT") {
 				CountPointF++;
+				if (CountPointF < 3) SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointF).data());
 				if (CountPointF == 1) { FRect.left = LOWORD(lParam) - 11; FRect.top = HIWORD(lParam) - 11; }
 				else if (CountPointF == 2) { FRect.right = LOWORD(lParam) - 11; FRect.bottom = HIWORD(lParam) - 11; }
 				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (2)", "Caption text", MB_OK);
 			}
 			if (CheckDraw == "ID_POLYGON" || CheckDraw == "ID_POLYLINE") {
 				CountPointPP++;
-				if (CountPointPP != 9) { ptpp[CountPointPP - 1].x = LOWORD(lParam) - 11; ptpp[CountPointPP - 1].y = HIWORD(lParam) - 11; }
+				if (CountPointPP < 9) SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointPP).data());
+				if (CountPointPP < 9) { ptpp[CountPointPP - 1].x = LOWORD(lParam) - 11; ptpp[CountPointPP - 1].y = HIWORD(lParam) - 11; }
 				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (8)", "Caption text", MB_OK);
 			}
 		}
@@ -255,15 +267,42 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	}
 	case WM_COMMAND: {
 		switch (LOWORD(wParam)) {
-		case ID_LINE: { CheckDraw = "ID_LINE"; break; }
-		case ID_ELLIPS: { CheckDraw = "ID_ELLIPS"; break; }
-		case ID_FOCUSRECT: { CheckDraw = "ID_FOCUSRECT"; break; }
-		case ID_CHORD: { CheckDraw = "ID_CHORD"; break; }
-		case ID_PIE: { CheckDraw = "ID_PIE"; break; }
-		case ID_ARC: { CheckDraw = "ID_ARC"; break; }
-		case ID_POLYGON: { CheckDraw = "ID_POLYGON"; break; }
-		case ID_POLYLINE: { CheckDraw = "ID_POLYLINE"; break; }
-		case ID_RECTANGLE: { CheckDraw = "ID_RECTANGLE"; break; }
+		case ID_LINE: { CheckDraw = "ID_LINE"; 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Линия");
+			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"2");
+			break; }
+		case ID_ELLIPS: { CheckDraw = "ID_ELLIPS"; 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Эллипс"); 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"2");
+			break; }
+		case ID_FOCUSRECT: { CheckDraw = "ID_FOCUSRECT"; 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Пунктирный прямоугольник");
+			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"2");
+			break; }
+		case ID_CHORD: { CheckDraw = "ID_CHORD"; 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Сегмент эллипса"); 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"4");
+			break; }
+		case ID_PIE: { CheckDraw = "ID_PIE"; 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Сектор эллипса"); 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"4");
+			break; }
+		case ID_ARC: { CheckDraw = "ID_ARC"; 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Дуга (часть эллипса)"); 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"4");
+			break; }
+		case ID_POLYGON: { CheckDraw = "ID_POLYGON"; 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Произвольный многоугольник"); 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"8");
+			break; }
+		case ID_POLYLINE: { CheckDraw = "ID_POLYLINE"; 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Ломанные линии"); 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"8");
+			break; }
+		case ID_RECTANGLE: { 
+			CheckDraw = "ID_RECTANGLE"; SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Прямоугольник"); 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"2");
+			break; }
 		case ID_CLEAN: { 
 			PatBlt(hdcm, 0, 0, lx, ly, PATCOPY); // большая область
 			PatBlt(hdcm2, 0, 0, lx2, ly2, PATCOPY); // small view
@@ -289,6 +328,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 
 			InvalidateRect(hWnd, &rect1, false);
 			CountPointLER = 0; CountPointCAP = 0; CountPointF = 0; CountPointPP = 0; 
+			SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(0).data());
 			break;
 		}
 		case SMALLV: {

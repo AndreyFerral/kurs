@@ -22,18 +22,20 @@
 #define IDC_COLOR                       1010
 #define IDC_STYLE                       1011
 #define IDC_WIDTH                       1012
-#define IDC_CHECK                      1013
+#define IDC_CHECK                       1013
 #define BIG_STATIC                      1014
 #define SMALL_STATIC                    1015
 #define DRAW_STATIC                     1020
-#define ID_32771                        32771
+#define IDC_INFO                        1023
+#define IDC_INFO2                       1024
+#define IDC_INFO3                       1025
+#define IDC_INFO4                       1026
+#define IDC_INFO5                       1027
+#define IDC_INFO6                       1028
+#define IDC_INFO7                       1029
 #define ID_Menu                         32773
-#define ID_32774                        32774
 #define ID_LINE                         32775
 #define ID_ELLIPS                       32776
-#define ID_32783                        32783
-#define ID_32786                        32786
-#define ID_32789                        32789
 #define ID_FOCUSRECT                    32797
 #define ID_CHORD                        32798
 #define ID_PIE                          32799
@@ -41,7 +43,6 @@
 #define ID_POLYGON                      32801
 #define ID_POLYLINE                     32802
 #define ID_RECTANGLE                    32803
-#define ID_32804                        32804
 #define ID_CLEAN                        32805
 #define IDC_STATIC                      -1
 
@@ -52,7 +53,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         32806
-#define _APS_NEXT_CONTROL_VALUE         1021
+#define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif
