@@ -36,6 +36,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	return 0;
 }
 
+void InfoFigure(HWND hWnd, string info3, string info5) {
+	SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(0).data());
+	SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)info3.data());
+	SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)info5.data());
+}
+
 void CreateToolTip(HWND hwndParent, LPSTR ToolTipText) {
 	// Create a tooltip.
 	HWND hwndTT = CreateWindowEx(WS_EX_TOPMOST,
@@ -152,8 +158,6 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		CreateToolTip(GetDlgItem(hWnd, IDC_WIDTH), LPSTR("Изменить ширину пера"));
 		CreateToolTip(GetDlgItem(hWnd, EXECUTE), LPSTR("Нарисовать выбранную фигуру"));
 		CreateToolTip(GetDlgItem(hWnd, SMALLV), LPSTR("Отобразить содержимое большого окна в маленьком"));
-
-
 		break;
 	}
 	//Обработка сообщения прокрутки по горизонтали
@@ -265,42 +269,15 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	}
 	case WM_COMMAND: {
 		switch (LOWORD(wParam)) {
-		case ID_LINE: { CheckDraw = "ID_LINE"; 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Линия");
-			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"2");
-			break; }
-		case ID_ELLIPS: { CheckDraw = "ID_ELLIPS"; 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Эллипс"); 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"2");
-			break; }
-		case ID_FOCUSRECT: { CheckDraw = "ID_FOCUSRECT"; 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Пунктирный прямоугольник");
-			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"2");
-			break; }
-		case ID_CHORD: { CheckDraw = "ID_CHORD"; 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Сегмент эллипса"); 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"4");
-			break; }
-		case ID_PIE: { CheckDraw = "ID_PIE"; 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Сектор эллипса"); 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"4");
-			break; }
-		case ID_ARC: { CheckDraw = "ID_ARC"; 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Дуга (часть эллипса)"); 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"4");
-			break; }
-		case ID_POLYGON: { CheckDraw = "ID_POLYGON"; 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Произвольный многоугольник"); 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"8");
-			break; }
-		case ID_POLYLINE: { CheckDraw = "ID_POLYLINE"; 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Ломанные линии"); 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"8");
-			break; }
-		case ID_RECTANGLE: { 
-			CheckDraw = "ID_RECTANGLE"; SendMessage(GetDlgItem(hWnd, IDC_INFO3), WM_SETTEXT, NULL, (LPARAM)"Прямоугольник"); 
-			SendMessage(GetDlgItem(hWnd, IDC_INFO7), WM_SETTEXT, NULL, (LPARAM)"2");
-			break; }
+		case ID_LINE: { CheckDraw = "ID_LINE"; InfoFigure(hWnd, "Линия", "2"); break; }
+		case ID_ELLIPS: { CheckDraw = "ID_ELLIPS"; InfoFigure(hWnd, "Эллипс", "2"); break; }
+		case ID_RECTANGLE: { CheckDraw = "ID_RECTANGLE"; InfoFigure(hWnd, "Прямоугольник", "2"); break; }
+		case ID_FOCUSRECT: { CheckDraw = "ID_FOCUSRECT"; InfoFigure(hWnd, "Пунктирный прямоугольник", "2"); break; }
+		case ID_CHORD: { CheckDraw = "ID_CHORD"; InfoFigure(hWnd, "Сегмент эллипса", "4"); break; }
+		case ID_PIE: { CheckDraw = "ID_PIE"; InfoFigure(hWnd, "Сектор эллипса", "4"); break; }
+		case ID_ARC: { CheckDraw = "ID_ARC"; InfoFigure(hWnd, "Дуга (часть эллипса)", "4"); break; }
+		case ID_POLYGON: { CheckDraw = "ID_POLYGON"; InfoFigure(hWnd, "Произвольный многоугольник", "8"); break; }
+		case ID_POLYLINE: { CheckDraw = "ID_POLYLINE"; InfoFigure(hWnd, "Ломанные линии", "8"); break; }
 		case ID_CLEAN: { 
 			SelectObject(hdcm, (HBRUSH)GetStockObject(WHITE_BRUSH)); // кисть 
 			SelectObject(hdcm1, (HBRUSH)GetStockObject(WHITE_BRUSH)); // кисть 
