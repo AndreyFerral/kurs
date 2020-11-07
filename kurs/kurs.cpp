@@ -5,11 +5,13 @@
 #include <commctrl.h> // tooltip
 using namespace std;
 
+HWND DialogHelp;
 HWND hWndDialog;
 HINSTANCE hInst;
 
 // Описание используемой оконной процедуры 
 BOOL CALLBACK PviewDlgProc(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK DialogBoxHelp(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
 
 // Главное приложение программы 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
@@ -278,6 +280,13 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		case ID_ARC: { CheckDraw = "ID_ARC"; InfoFigure(hWnd, "Дуга (часть эллипса)", "4"); break; }
 		case ID_POLYGON: { CheckDraw = "ID_POLYGON"; InfoFigure(hWnd, "Произвольный многоугольник", "8"); break; }
 		case ID_POLYLINE: { CheckDraw = "ID_POLYLINE"; InfoFigure(hWnd, "Ломанные линии", "8"); break; }
+		case ID_HELP: { 
+			
+			DialogHelp = CreateDialog(hInst, MAKEINTRESOURCE(IDD_DIALOG2), 0, DialogBoxHelp);
+			ShowWindow(DialogHelp, SW_SHOW);
+			UpdateWindow(DialogHelp);
+			//DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG2), 0, DialogBoxHelp); 
+			break; }
 		case ID_CLEAN: { 
 			SelectObject(hdcm, (HBRUSH)GetStockObject(WHITE_BRUSH)); // кисть 
 			SelectObject(hdcm1, (HBRUSH)GetStockObject(WHITE_BRUSH)); // кисть 
@@ -325,5 +334,36 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		break;
 	}
 	default: return FALSE; }
+	return TRUE;
+}
+
+
+//Процедура обработки сообщений диалогового окна 
+BOOL CALLBACK DialogBoxHelp(HWND hWnd,
+	UINT wMsg,
+	WPARAM wParam,
+	LPARAM lParam) {
+
+	switch (wMsg) {
+	case WM_CLOSE:
+		PostQuitMessage(0);
+		break;
+
+	case WM_INITDIALOG: {
+		//
+		break;
+	}
+
+	case WM_PAINT: {
+		//HDC hdc = BeginPaint(hWnd, &ps);
+		//EndPaint(hWnd, &ps);
+		break;
+	}
+	case WM_COMMAND: {
+		//
+		break;
+	}
+	default: return FALSE;
+	}
 	return TRUE;
 }
