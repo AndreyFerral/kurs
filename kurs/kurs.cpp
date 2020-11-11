@@ -81,9 +81,8 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	WPARAM wParam,
 	LPARAM lParam) {
 
-	static string CheckDraw = "", TextConvert;
-	static int CountPointLER = 0, CountPointCAP = 0,
-		CountPointF = 0, CountPointPP = 0;
+	static string CheckDraw = "";
+	static int CountPoint = 0;
 	static RECT FRect, rect, rect1, rect2;
 	static POINT pt[4], ptpp[8], point;
 	static HDC hdc, hdcm, hdc1, hdcm1, hdc2, hdcm2; // контекст устройтва 
@@ -219,32 +218,28 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	case WM_LBUTTONDOWN: {
 		if (LOWORD(lParam) >= 11 && LOWORD(lParam) <= lx + 11 && HIWORD(lParam) >= 11 && HIWORD(lParam) <= ly + 11) {
 			if (CheckDraw == "") { MessageBox(hWnd, "Выберите тип фигуры для рисования", "Caption text", MB_OK); };
-			if (CheckDraw == "ID_LINE" || CheckDraw == "ID_ELLIPS" || CheckDraw == "ID_RECTANGLE") {
-				CountPointLER++;
-				if (CountPointLER < 3) {
-					SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointLER).data());
-					pt[CountPointLER - 1].x = LOWORD(lParam) - 11; pt[CountPointLER - 1].y = HIWORD(lParam) - 11;
+			if (CheckDraw == "ID_LINE" || CheckDraw == "ID_ELLIPS" || CheckDraw == "ID_RECTANGLE") { CountPoint++;
+				if (CountPoint < 3) {
+					SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPoint).data());
+					pt[CountPoint - 1].x = LOWORD(lParam) - 11; pt[CountPoint - 1].y = HIWORD(lParam) - 11;
 				} else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (2)", "Caption text", MB_OK);
 			}
-			if (CheckDraw == "ID_CHORD" || CheckDraw == "ID_ARC" || CheckDraw == "ID_PIE") {
-				CountPointCAP++;
-				if (CountPointCAP < 5) {
-					SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointCAP).data());
-					pt[CountPointCAP - 1].x = LOWORD(lParam) - 11; pt[CountPointCAP - 1].y = HIWORD(lParam) - 11;
+			if (CheckDraw == "ID_CHORD" || CheckDraw == "ID_ARC" || CheckDraw == "ID_PIE") { CountPoint++;
+				if (CountPoint < 5) {
+					SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPoint).data());
+					pt[CountPoint - 1].x = LOWORD(lParam) - 11; pt[CountPoint - 1].y = HIWORD(lParam) - 11;
 				} else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (4)", "Caption text", MB_OK);
 			}
-			if (CheckDraw == "ID_FOCUSRECT") {
-				CountPointF++;
-				if (CountPointF < 3) SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointF).data());
-				if (CountPointF == 1) { FRect.left = LOWORD(lParam) - 11; FRect.top = HIWORD(lParam) - 11; }
-				else if (CountPointF == 2) { FRect.right = LOWORD(lParam) - 11; FRect.bottom = HIWORD(lParam) - 11; }
+			if (CheckDraw == "ID_FOCUSRECT") { CountPoint++;
+				if (CountPoint < 3) SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPoint).data());
+				if (CountPoint == 1) { FRect.left = LOWORD(lParam) - 11; FRect.top = HIWORD(lParam) - 11; }
+				else if (CountPoint == 2) { FRect.right = LOWORD(lParam) - 11; FRect.bottom = HIWORD(lParam) - 11; }
 				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (2)", "Caption text", MB_OK);
 			}
-			if (CheckDraw == "ID_POLYGON" || CheckDraw == "ID_POLYLINE") {
-				CountPointPP++;
-				if (CountPointPP < 9) { 
-					SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointPP).data()); 
-					ptpp[CountPointPP - 1].x = LOWORD(lParam) - 11; ptpp[CountPointPP - 1].y = HIWORD(lParam) - 11; 
+			if (CheckDraw == "ID_POLYGON" || CheckDraw == "ID_POLYLINE") { CountPoint++;
+				if (CountPoint < 9) { 
+					SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPoint).data()); 
+					ptpp[CountPoint - 1].x = LOWORD(lParam) - 11; ptpp[CountPoint - 1].y = HIWORD(lParam) - 11; 
 				}
 				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (8)", "Caption text", MB_OK);
 			}
@@ -298,32 +293,25 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 			else SetPolyFillMode(hdcm, ALTERNATE); 
 			break;
 		}
-
 		case EXECUTE: {
-			if (CheckDraw == "ID_LINE" && CountPointLER >= 2) { MoveToEx(hdcm, pt[1].x, pt[1].y, NULL); LineTo(hdcm, pt[0].x, pt[0].y); }
-			else if (CheckDraw == "ID_ELLIPS" && CountPointLER >= 2) { Ellipse(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y); }
-			else if (CheckDraw == "ID_RECTANGLE" && CountPointLER >= 2) { Rectangle(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y); }
-			else if (CheckDraw == "ID_FOCUSRECT" && CountPointF >= 2) { DrawFocusRect(hdcm, &FRect); }
-			else if (CheckDraw == "ID_CHORD" && CountPointCAP >= 4) { Chord(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y, pt[2].x, pt[2].y, pt[3].x, pt[3].y); }
-			else if (CheckDraw == "ID_PIE" && CountPointCAP >= 4) { Pie(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y, pt[2].x, pt[2].y, pt[3].x, pt[3].y); }
-			else if (CheckDraw == "ID_ARC" && CountPointCAP >= 4) { Arc(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y, pt[2].x, pt[2].y, pt[3].x, pt[3].y); }
-			else if (CheckDraw == "ID_POLYLINE") { Polyline(hdcm, ptpp, CountPointPP); }
-			else if (CheckDraw == "ID_POLYGON") { Polygon(hdcm, ptpp, CountPointPP); }
+			if (CheckDraw == "ID_LINE" && CountPoint >= 2) { MoveToEx(hdcm, pt[1].x, pt[1].y, NULL); LineTo(hdcm, pt[0].x, pt[0].y); }
+			else if (CheckDraw == "ID_ELLIPS" && CountPoint >= 2) { Ellipse(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y); }
+			else if (CheckDraw == "ID_RECTANGLE" && CountPoint >= 2) { Rectangle(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y); }
+			else if (CheckDraw == "ID_FOCUSRECT" && CountPoint >= 2) { DrawFocusRect(hdcm, &FRect); }
+			else if (CheckDraw == "ID_CHORD" && CountPoint >= 4) { Chord(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y, pt[2].x, pt[2].y, pt[3].x, pt[3].y); }
+			else if (CheckDraw == "ID_PIE" && CountPoint >= 4) { Pie(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y, pt[2].x, pt[2].y, pt[3].x, pt[3].y); }
+			else if (CheckDraw == "ID_ARC" && CountPoint >= 4) { Arc(hdcm, pt[0].x, pt[0].y, pt[1].x, pt[1].y, pt[2].x, pt[2].y, pt[3].x, pt[3].y); }
+			else if (CheckDraw == "ID_POLYLINE") { Polyline(hdcm, ptpp, CountPoint); }
+			else if (CheckDraw == "ID_POLYGON") { Polygon(hdcm, ptpp, CountPoint); }
 			else MessageBox(hWnd, "Недостатоно точек для построения фигуры", "Caption text", MB_OK);
 
 			InvalidateRect(hWnd, &rect1, false);
-			CountPointLER = 0; CountPointCAP = 0; CountPointF = 0; CountPointPP = 0; 
+			CountPoint = 0; //CountPoint = 0; CountPoint = 0; CountPoint = 0; 
 			SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(0).data());
 			break;
 		}
-		case SMALLV: {
-			InvalidateRect(hWnd, &rect2, false);
-			break;
-		}
-		case IDC_BUTTON2: {
-			InvalidateRect(hWnd, NULL, false);
-			break;
-		}
+		case SMALLV: { InvalidateRect(hWnd, &rect2, false); break; }
+		case IDC_BUTTON2: { InvalidateRect(hWnd, NULL, false); break; }
 		default: return FALSE; }
 		break;
 	}
