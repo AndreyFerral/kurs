@@ -335,7 +335,6 @@ BOOL CALLBACK DialogBoxHelp(HWND hWnd,
 	WPARAM wParam,
 	LPARAM lParam) {
 
-	HWND hEdit = GetDlgItem(hWnd, IDC_EDIT1);
 	string text;
 	regex reg("[a-z]{3}[1-9]{3}[@][A-Z][.][1-9]{2}");
 
@@ -351,17 +350,19 @@ BOOL CALLBACK DialogBoxHelp(HWND hWnd,
 	case WM_COMMAND: {
 		switch (LOWORD(wParam)) {
 		case IDC_CODE: { 
-			SendMessage(hEdit, WM_GETTEXT, MAX_PATH, (LPARAM)text.data());
+			SendMessage(GetDlgItem(hWnd, IDC_EDIT1), WM_GETTEXT, MAX_PATH, (LPARAM)text.data());
 			if (regex_match(text.data(), reg)) {
 				NoActive = false; 
 				SendMessage(GetDlgItem(hWnd, IDC_INFOPROGRAM), WM_SETTEXT, NULL, (LPARAM)"Программа активирована!");
-			} else {
+			}
+			else {
 				NoActive = true;
 				SendMessage(GetDlgItem(hWnd, IDC_INFOPROGRAM), WM_SETTEXT, NULL, (LPARAM)"Программа не активирована!");
 			}
 			break; }
 		case IDC_EXIT: { 
 			EndDialog(hWnd, 0);
+			InvalidateRect(hWnd, NULL, false);
 			break;
 		}
 		default: return FALSE; }
