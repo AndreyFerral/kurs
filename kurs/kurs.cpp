@@ -2,6 +2,7 @@
 #include "framework.h" 
 #include "resource.h" 
 #include <string> 
+#include <regex> 
 #include <commctrl.h> // tooltip
 using namespace std;
 
@@ -12,6 +13,7 @@ HINSTANCE hInst;
 // Описание используемой оконной процедуры 
 BOOL CALLBACK PviewDlgProc(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK DialogBoxHelp(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
+bool NoActive = true;
 
 // Главное приложение программы 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
@@ -83,7 +85,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 
 	static string CheckDraw = "";
 	static int CountPoint = 0;
-	static RECT FRect, rect, rect1, rect2;
+	static RECT FRect, rect, rect1, rect2, rect3;
 	static POINT pt[4], ptpp[8], point;
 	static HDC hdc, hdcm, hdc1, hdcm1, hdc2, hdcm2; // контекст устройтва 
 	static PAINTSTRUCT ps; // структура для перерисовки окна 
@@ -93,6 +95,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	static HWND hStatic, hStatic1, hStatic2;
 	static int lx, ly, lx1, ly1, lx2, ly2; // координаты конца экрана 
 	static int pen = 1, brush = 1, color = 1, style = 7, width = 1; // значения для всех полос стандартные
+	TCHAR* str = LPSTR("\n\nПрограмма не\nактивирована");
 
 	switch (wMsg) {
 	case WM_CLOSE:
@@ -112,12 +115,15 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		hdc2 = GetDC(hStatic2); // получаем контекст устройства окна hWnd 
 		GetClientRect(hStatic2, &rect2); // получить координаты графического окна 
 
+		GetClientRect(hStatic2, &rect3); // получить координаты графического окна 
+
 		lx = rect.right;
 		ly = rect.bottom;
 		lx1 = rect1.right;
 		ly1 = rect1.bottom;
 		lx2 = rect2.right;
 		ly2 = rect2.bottom;
+
 
 		// создать в памяти контекст устройства hdcm, 
 		// совместимый с текущим контекстом устройства вывода hdc. 
@@ -146,6 +152,8 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		PatBlt(hdcm2, 0, 0, lx2, ly2, PATCOPY); // small view
 		InvalidateRect(hWnd, NULL, false);
 
+		DrawText(hdcm1, str, lstrlen(str), &rect1, DT_CENTER);
+
 		// для InvalidateRect
 		rect1.right = rect.right + 11;
 		rect1.bottom = rect.bottom + rect.bottom;
@@ -159,6 +167,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		CreateToolTip(GetDlgItem(hWnd, IDC_WIDTH), LPSTR("Изменить ширину пера"));
 		CreateToolTip(GetDlgItem(hWnd, EXECUTE), LPSTR("Нарисовать выбранную фигуру"));
 		CreateToolTip(GetDlgItem(hWnd, SMALLV), LPSTR("Отобразить содержимое большого окна в маленьком"));
+
 		break;
 	}
 	//Обработка сообщения прокрутки по горизонтали
@@ -210,6 +219,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		if (width > 5) { width = 5; } if (width < 1) { width = 1; }
 
 		Rectangle(hdcm1, 21, 25, 81, 70);
+		if (NoActive) DrawText(hdcm1, str, lstrlen(str), &rect3, DT_CENTER);
 		InvalidateRect(hWnd, &rect1, false);
 
 		break;
@@ -319,30 +329,42 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 	return TRUE;
 }
 
-
 //Процедура обработки сообщений диалогового окна 
 BOOL CALLBACK DialogBoxHelp(HWND hWnd,
 	UINT wMsg,
 	WPARAM wParam,
 	LPARAM lParam) {
 
+	HWND hEdit = GetDlgItem(hWnd, IDC_EDIT1);
+	string text;
+	regex reg("[a-z]{3}[1-9]{3}[@][A-Z][.][1-9]{2}");
+
 	switch (wMsg) {
 	case WM_CLOSE:
 		EndDialog(hWnd, 0);
 		break;
-
 	case WM_INITDIALOG: {
-		//
-		break;
-	}
-
-	case WM_PAINT: {
-		//HDC hdc = BeginPaint(hWnd, &ps);
-		//EndPaint(hWnd, &ps);
+		if (NoActive) SendMessage(GetDlgItem(hWnd, IDC_INFOPROGRAM), WM_SETTEXT, NULL, (LPARAM)"Программа не активирована!");
+		else SendMessage(GetDlgItem(hWnd, IDC_INFOPROGRAM), WM_SETTEXT, NULL, (LPARAM)"Программа активирована!");
 		break;
 	}
 	case WM_COMMAND: {
-		//
+		switch (LOWORD(wParam)) {
+		case IDC_CODE: { 
+			SendMessage(hEdit, WM_GETTEXT, MAX_PATH, (LPARAM)text.data());
+			if (regex_match(text.data(), reg)) {
+				NoActive = false; 
+				SendMessage(GetDlgItem(hWnd, IDC_INFOPROGRAM), WM_SETTEXT, NULL, (LPARAM)"Программа активирована!");
+			} else {
+				NoActive = true;
+				SendMessage(GetDlgItem(hWnd, IDC_INFOPROGRAM), WM_SETTEXT, NULL, (LPARAM)"Программа не активирована!");
+			}
+			break; }
+		case IDC_EXIT: { 
+			EndDialog(hWnd, 0);
+			break;
+		}
+		default: return FALSE; }
 		break;
 	}
 	default: return FALSE;

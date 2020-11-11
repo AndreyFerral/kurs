@@ -29,9 +29,13 @@
 #define DRAW_STATIC                     1020
 #define IDC_INFO                        1023
 #define IDC_INFO2                       1024
+#define IDC_CODE                        1024
 #define IDC_INFO3                       1025
+#define IDC_EXIT                        1025
 #define IDC_INFO4                       1026
+#define IDC_EDIT1                       1026
 #define IDC_INFO5                       1027
+#define IDC_INFOPROGRAM                 1027
 #define IDC_INFO6                       1028
 #define IDC_INFO7                       1029
 #define ID_Menu                         32773
@@ -56,7 +60,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32808
-#define _APS_NEXT_CONTROL_VALUE         1024
+#define _APS_NEXT_CONTROL_VALUE         1028
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif
