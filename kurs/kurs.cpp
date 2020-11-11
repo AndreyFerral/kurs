@@ -280,12 +280,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		case ID_ARC: { CheckDraw = "ID_ARC"; InfoFigure(hWnd, "Дуга (часть эллипса)", "4"); break; }
 		case ID_POLYGON: { CheckDraw = "ID_POLYGON"; InfoFigure(hWnd, "Произвольный многоугольник", "8"); break; }
 		case ID_POLYLINE: { CheckDraw = "ID_POLYLINE"; InfoFigure(hWnd, "Ломанные линии", "8"); break; }
-		case ID_HELP: { 
-			
-			DialogHelp = CreateDialog(hInst, MAKEINTRESOURCE(IDD_DIALOG2), 0, DialogBoxHelp);
-			ShowWindow(DialogHelp, SW_SHOW);
-			UpdateWindow(DialogHelp);
-			//DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG2), 0, DialogBoxHelp); 
+		case ID_HELP: { DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG2), hWnd, DialogBoxHelp, 0);
 			break; }
 		case ID_CLEAN: { 
 			SelectObject(hdcm, (HBRUSH)GetStockObject(WHITE_BRUSH)); // кисть 
@@ -346,7 +341,7 @@ BOOL CALLBACK DialogBoxHelp(HWND hWnd,
 
 	switch (wMsg) {
 	case WM_CLOSE:
-		PostQuitMessage(0);
+		EndDialog(hWnd, 0);
 		break;
 
 	case WM_INITDIALOG: {
