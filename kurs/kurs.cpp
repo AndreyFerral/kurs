@@ -221,19 +221,17 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 			if (CheckDraw == "") { MessageBox(hWnd, "Выберите тип фигуры для рисования", "Caption text", MB_OK); };
 			if (CheckDraw == "ID_LINE" || CheckDraw == "ID_ELLIPS" || CheckDraw == "ID_RECTANGLE") {
 				CountPointLER++;
-				if (CountPointLER < 3) SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointLER).data());
-				if (CountPointLER == 1) { pt[0].x = LOWORD(lParam) - 11; pt[0].y = HIWORD(lParam) - 11; }
-				else if (CountPointLER == 2) { pt[1].x = LOWORD(lParam) - 11; pt[1].y = HIWORD(lParam) - 11; }
-				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (2)", "Caption text", MB_OK);
+				if (CountPointLER < 3) {
+					SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointLER).data());
+					pt[CountPointLER - 1].x = LOWORD(lParam) - 11; pt[CountPointLER - 1].y = HIWORD(lParam) - 11;
+				} else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (2)", "Caption text", MB_OK);
 			}
 			if (CheckDraw == "ID_CHORD" || CheckDraw == "ID_ARC" || CheckDraw == "ID_PIE") {
 				CountPointCAP++;
-				if (CountPointCAP < 5) SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointCAP).data());
-				if (CountPointCAP == 1) { pt[0].x = LOWORD(lParam) - 11; pt[0].y = HIWORD(lParam) - 11; }
-				else if (CountPointCAP == 2) { pt[1].x = LOWORD(lParam) - 11; pt[1].y = HIWORD(lParam) - 11; }
-				else if (CountPointCAP == 3) { pt[2].x = LOWORD(lParam) - 11; pt[2].y = HIWORD(lParam) - 11; }
-				else if (CountPointCAP == 4) { pt[3].x = LOWORD(lParam) - 11; pt[3].y = HIWORD(lParam) - 11; }
-				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (4)", "Caption text", MB_OK);
+				if (CountPointCAP < 5) {
+					SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointCAP).data());
+					pt[CountPointCAP - 1].x = LOWORD(lParam) - 11; pt[CountPointCAP - 1].y = HIWORD(lParam) - 11;
+				} else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (4)", "Caption text", MB_OK);
 			}
 			if (CheckDraw == "ID_FOCUSRECT") {
 				CountPointF++;
@@ -244,8 +242,10 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 			}
 			if (CheckDraw == "ID_POLYGON" || CheckDraw == "ID_POLYLINE") {
 				CountPointPP++;
-				if (CountPointPP < 9) SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointPP).data());
-				if (CountPointPP < 9) { ptpp[CountPointPP - 1].x = LOWORD(lParam) - 11; ptpp[CountPointPP - 1].y = HIWORD(lParam) - 11; }
+				if (CountPointPP < 9) { 
+					SendMessage(GetDlgItem(hWnd, IDC_INFO5), WM_SETTEXT, NULL, (LPARAM)to_string(CountPointPP).data()); 
+					ptpp[CountPointPP - 1].x = LOWORD(lParam) - 11; ptpp[CountPointPP - 1].y = HIWORD(lParam) - 11; 
+				}
 				else MessageBox(hWnd, "Вы выбрали максимальное кол-во точек (8)", "Caption text", MB_OK);
 			}
 		}
@@ -280,8 +280,7 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
 		case ID_ARC: { CheckDraw = "ID_ARC"; InfoFigure(hWnd, "Дуга (часть эллипса)", "4"); break; }
 		case ID_POLYGON: { CheckDraw = "ID_POLYGON"; InfoFigure(hWnd, "Произвольный многоугольник", "8"); break; }
 		case ID_POLYLINE: { CheckDraw = "ID_POLYLINE"; InfoFigure(hWnd, "Ломанные линии", "8"); break; }
-		case ID_HELP: { DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG2), hWnd, DialogBoxHelp, 0);
-			break; }
+		case ID_HELP: { DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG2), hWnd, DialogBoxHelp, 0); break; }
 		case ID_CLEAN: { 
 			SelectObject(hdcm, (HBRUSH)GetStockObject(WHITE_BRUSH)); // кисть 
 			SelectObject(hdcm1, (HBRUSH)GetStockObject(WHITE_BRUSH)); // кисть 
